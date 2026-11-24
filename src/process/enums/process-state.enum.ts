@@ -1,0 +1,8 @@
+export enum ProcessState {
+  NEW = 'NEW',
+  READY = 'READY',
+  RUNNING = 'RUNNING',
+  BLOCKED = 'BLOCKED',
+  TERMINATED = 'TERMINATED',
+  SUSPICIOUS = 'SUSPICIOUS',
+}

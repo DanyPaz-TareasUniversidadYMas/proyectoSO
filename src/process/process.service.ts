@@ -1,26 +1,91 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProcessDto } from './dto/create-process.dto';
 import { UpdateProcessDto } from './dto/update-process.dto';
+import { handleError } from '../common/helpers';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Process } from './entities';
+import { Repository } from 'typeorm';
+import { ProcessState } from './enums';
 
 @Injectable()
 export class ProcessService {
-  create(createProcessDto: CreateProcessDto) {
-    return 'This action adds a new process';
+
+  constructor(
+    @InjectRepository(Process)
+    private readonly processRepository: Repository<Process>
+  ){}
+
+  async create(createProcessDto: CreateProcessDto) {
+    try {
+
+      const newProcess = this.processRepository.create({
+        ...createProcessDto,
+        state: ProcessState.NEW,
+        remainingTime: createProcessDto.burstTime,
+        arrivalTime: new Date(),
+      });
+
+      await this.processRepository.save(newProcess);
+
+      return newProcess;
+      
+    } catch (error) {
+      handleError(error);
+    }
   }
 
   findAll() {
-    return `This action returns all process`;
+    try {
+
+      return this.processRepository.find();
+
+    } catch (error) {
+      handleError(error);
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} process`;
+  findOne(pid: number) {
+    try {
+
+      const process = this.processRepository.findOne({where: {pid}});
+
+      if(!process) throw new NotFoundException(`process with pid: ${pid} not found`);
+
+      return process;
+      
+    } catch (error) {
+      handleError(error);
+    }
   }
 
-  update(id: number, updateProcessDto: UpdateProcessDto) {
-    return `This action updates a #${id} process`;
+  async update(pid: number, updateProcessDto: UpdateProcessDto) {
+    try {
+
+      await this.findOne(pid);
+     
+      await this.processRepository.update(pid, updateProcessDto);
+
+      return this.findOne(pid);
+
+    } catch (error) {
+      handleError(error);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} process`;
+  async remove(pid: number) {
+
+    try {
+
+      const process = await this.findOne(pid);
+     
+      await this.processRepository.delete(pid);
+
+      return process;
+
+    } catch (error) {
+      handleError(error);
+    }
+
+
   }
 }
