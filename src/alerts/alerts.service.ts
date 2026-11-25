@@ -1,26 +1,47 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAlertDto } from './dto/create-alert.dto';
-import { UpdateAlertDto } from './dto/update-alert.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { handleError } from '../common/helpers';
+import { Alert } from './entities/alert.entity';
 
 @Injectable()
 export class AlertsService {
-  create(createAlertDto: CreateAlertDto) {
-    return 'This action adds a new alert';
-  }
+
+  constructor(
+    @InjectRepository(Alert)
+    private readonly alertRepository: Repository<Alert>,
+  ) {}
 
   findAll() {
-    return `This action returns all alerts`;
+    try {
+      return this.alertRepository.find({ order: { createdAt: 'DESC' } });
+    } catch (error) {
+      handleError(error);
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} alert`;
+  async findOne(id: number) {
+    try {
+      const alert = await this.alertRepository.findOne({ where: { id } });
+
+      if (!alert) throw new NotFoundException(`alert with id: ${id} not found`);
+
+      return alert;
+    } catch (error) {
+      handleError(error);
+    }
   }
 
-  update(id: number, updateAlertDto: UpdateAlertDto) {
-    return `This action updates a #${id} alert`;
-  }
+  async resolve(id: number) {
+    try {
+      const alert = await this.findOne(id);
 
-  remove(id: number) {
-    return `This action removes a #${id} alert`;
+      alert!.resolved = true;
+      alert!.resolvedAt = new Date();
+
+      return await this.alertRepository.save(alert!);
+    } catch (error) {
+      handleError(error);
+    }
   }
 }
