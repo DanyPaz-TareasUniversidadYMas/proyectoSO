@@ -3,9 +3,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AlertsService } from './alerts.service';
 import { AlertsController } from './alerts.controller';
 import { Alert } from './entities/alert.entity';
+import { Process } from '../process/entities';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Alert])],
+  imports: [TypeOrmModule.forFeature([Alert, Process])],
   controllers: [AlertsController],
   providers: [AlertsService],
 })
