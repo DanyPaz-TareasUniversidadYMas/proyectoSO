@@ -1,0 +1,11 @@
+export enum AlertType {
+  ZOMBIE_PROCESS = 'ZOMBIE_PROCESS',
+  MEMORY_FRAGMENTATION = 'MEMORY_FRAGMENTATION',
+  FILE_CORRUPTION = 'FILE_CORRUPTION',
+}
+
+export enum AlertSeverity {
+  LOW = 'LOW',
+  MEDIUM = 'MEDIUM',
+  HIGH = 'HIGH',
+}
