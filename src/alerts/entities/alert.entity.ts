@@ -16,15 +16,16 @@ export class Alert {
     @Column()
     message: string;
 
+    // a qué apunta la alerta: pid del proceso, id del archivo, etc.
     @Column({ type: 'int', nullable: true })
     referenceId: number | null;
 
     @Column({ default: false })
     resolved: boolean;
 
-    @CreateDateColumn()
+    @CreateDateColumn({ type: 'timestamptz' })
     createdAt: Date;
 
-    @Column({ type: 'timestamp', nullable: true })
+    @Column({ type: 'timestamptz', nullable: true })
     resolvedAt: Date | null;
 }
