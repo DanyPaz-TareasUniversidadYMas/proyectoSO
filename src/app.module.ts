@@ -10,6 +10,10 @@ import { AlertsModule } from './alerts/alerts.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JoiValidationSchema } from './common/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
+import { SendEmailModule } from './send-email/send-email.module';
+import { VerificationCodeModule } from './verification-code/verification-code.module';
 
 @Module({
   imports: [
@@ -35,6 +39,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     SchedulerModule,
     FileSystemModule,
     AlertsModule,
+    UsersModule,
+    AuthModule,
+    SendEmailModule,
+    VerificationCodeModule
   ],
   controllers: [AppController],
   providers: [AppService],
